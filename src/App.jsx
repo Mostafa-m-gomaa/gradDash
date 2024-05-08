@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Requests from "./components/requests/Requests";
 import RequestCard from "./components/request-card/RequestCard";
 import Users from "./components/users/Users";
-import Employers from "./components/users/employers";
+import Employers from "./components/users/Employers";
 import EmployerRequests from "./components/requests/EmployerRequests";
 import RequestProgress from "./components/request-card/RequestProgress";
 import Orders from "./components/orders/Orders";
