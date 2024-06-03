@@ -10,6 +10,7 @@ export const navigationLinks = [
   { id: 6, title: "Courses" },
   { id: 7, title: "Sections" },
   { id: 8, title: "Posts" },
+  { id: 9, title: "Instructors pending Requests" },
 ];
 
 export const transactions = [

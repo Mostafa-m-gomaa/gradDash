@@ -21,7 +21,12 @@
   flex-wrap: wrap;
   border: 3px solid var(--clr-pumpkin);
   z-index: 110;
-  overflow-y: scroll;
+}
+.articles .scts img {
+  max-width: 100%;
+  min-width: 100%;
+  max-height: 150px;
+  min-height: 150px;
 }
 .articles .scts .close {
   position: absolute;
@@ -165,4 +170,4 @@
   max-width: 100%;
   min-width: 100%;
   margin-top: 10px;
-}/*# sourceMappingURL=article.css.map */
+}/*# sourceMappingURL=lessons.css.map */

@@ -17,6 +17,9 @@ import Categories from "./components/categories/Categories";
 import Courses from "./components/Courses/Courses";
 import Sections from "./components/Sections/Sections";
 import Posts from "./components/Posts/Posts";
+import InstRequests from "./components/InstructorsRequests/InstructorReq";
+import Lives from "./components/lives/Lives";
+import Lessons from "./components/lessons/Lessons";
 
 export const AppContext = createContext();
 
@@ -24,7 +27,8 @@ function App() {
   const [headTitle, setHeadTitle] = useState("تسجيل الدخول");
   const [login, setLogin] = useState(false);
   // const [route, setRoute] = useState("http://20.199.94.164:8000/api/v1");
-  const [route, setRoute] = useState("https://api.softwave-dev.com/api/v1/");
+  // const [route, setRoute] = useState("https://api.softwave-dev.com/api/v1/");
+  const [route, setRoute] = useState("https://gp.softwave-dev.com/api/v1/");
   const [employee, setEmployee] = useState(false);
 
   const [loader, setLoader] = useState(false);
@@ -76,10 +80,12 @@ function App() {
               <Route path="/categories" element={<Categories/>} />
               <Route path="/Courses" element={<Courses/>} />
               <Route path="/Sections" element={<Sections/>} />
+              <Route path="/Lives" element={<Lives/>} />
               <Route path="/employers" element={<Employers />} />
               <Route path="/posts" element={<Posts />} />
-              <Route path="/orders" element={<Orders />} />
+              <Route path="/Instructors pending Requests" element={<InstRequests />} />
               <Route path="/employer-requests" element={<EmployerRequests />} />
+              <Route path="/Lessons" element={<Lessons />} />
               <Route
                 path="/employer-requests/:id"
                 element={<EmployerRequests notMine={true} />}

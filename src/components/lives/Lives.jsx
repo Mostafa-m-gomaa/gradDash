@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
-import "./article.css";
+import "./lives.css";
 import { AppContext } from "../../App";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ContentTop from "../ContentTop/ContentTop";
 
-const Courses = () => {
+const Lives = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [artId, setArtId] = useState("");
   const [refresh, setRefresh] = useState(false);
@@ -15,17 +15,25 @@ const Courses = () => {
   const [categories,setCategories] = useState([]);
   const [userName, setUsername] = useState("");
   const [catId, setCatId] = useState("");
- 
   const [image, setImage] = useState(null);
-
   const [price, setPrice] = useState("");
   const [priceAfterDiscount, setPriceAfterDiscount] = useState("");
-  const [instructor, setInstructor] = useState("");
   const [description, setDescription] = useState("");
-  const [courseWord,setCourseWord]=useState("courses")
+  const [hour,setHour]=useState("")
+    const [duration,setDuration]=useState("")
+ const [meetingDate,setMeetingDate]=useState()
+ const [title,setTitle]=useState("")
+ const [courses,setCourses]=useState([])
+ const [showAddLink,setShowAddLink]=useState(false)
+ const [meetingLink,setMeetingLink]=useState("")
+ const [liveId,setLiveId]=useState("")
 
 
+const addLink =(id)=>{
+    setLiveId(id)
+    setShowAddLink(true)
 
+}
  
 
   const handleImageChange = (event) => {
@@ -44,21 +52,20 @@ const Courses = () => {
     event.preventDefault();
     const formData = new FormData();
 
-    formData.append("title", userName);
-    formData.append("image", image);
-    formData.append("category", catId);
-    formData.append("description", description);
-    formData.append("instructor", sessionStorage.getItem("id"));
-    formData.append("price", price);
-    formData.append("priceAfterDiscount", priceAfterDiscount);
+    formData.append("title", title);
+    formData.append("course", catId);
+    formData.append("date", meetingDate);
+    formData.append("hour", hour);
+    formData.append("duration", duration);
   
     setLoader(true);
     try {
-      const response = await fetch(`${route}/courses`, {
+      const response = await fetch(`${route}/lives`, {
         method: "POST",
-        body: formData,
+        body: JSON.stringify(Object.fromEntries(formData.entries())),
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+            "Content-Type": "application/json",
           
         },
       }).then((res) => res.json());
@@ -75,13 +82,47 @@ const Courses = () => {
       }
     } catch (error) {}
   };
+  
+  const handleSubmitUpdate = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+
+    formData.append("link", meetingLink);
+    
+  
+    setLoader(true);
+    try {
+      const response = await fetch(`${route}/lives/${liveId}`, {
+        method: "PUT",
+        body: JSON.stringify(Object.fromEntries(formData.entries())),
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          
+        },
+      }).then((res) => res.json());
+      setLoader(false);
+      console.log(response);
+      if (response.data) {
+        toast.success("Added Successfully");
+        setRefresh(!refresh);
+        setShowAddLink(false)
+      } else if (response.errors) {
+        toast.error(response.errors[0].msg);
+      } else {
+        console.log(response);
+        toast.error("هناك خطأ");
+      }
+    } catch (error) {}
+  };
+  
 
   const deleteArt = async () => {
     setShowConfirm(false);
     setLoader(true);
 
     try {
-      const response = await fetch(`${route}/courses/${artId}`, {
+      const response = await fetch(`${route}/lives/${artId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -118,42 +159,8 @@ const Courses = () => {
         }
       });
   }, [refresh]);
-  // useEffect(() => {
-  //   if(sessionStorage.getItem("role")==="instructor"){
-  //     console.log("instructor")
-  //     fetch(`${route}/MyCourses`, {
-  //       headers: {
-  //         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-  //       },
-  //     })
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         console.log(data);
-  //         if (data.data) {
-  //           setUsers(data.data);
-  //           console.log(data.data);
-  //         }
-  //       });
-  //   }
-  //   else if(sessionStorage.getItem("role")==="admin"){
-  //     fetch(`${route}/courses`, {
-  //       headers: {
-  //         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-  //       },
-  //     })
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         console.log(data);
-  //         if (data.data) {
-  //           setUsers(data.data);
-  //           console.log(data.data);
-  //         }
-  //       });
-  //   }
-    
 
- 
-  // }, [refresh]);
+
 
   useEffect(() => {
     const role = sessionStorage.getItem("role");
@@ -180,6 +187,28 @@ const Courses = () => {
         });
     }
   }, [refresh]);
+  useEffect(() => {
+    const role = sessionStorage.getItem("role");
+    const token = sessionStorage.getItem("token");
+    const endpoint = `${route}/lives` 
+  
+    fetch(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.data) {
+          setCourses(data.data);
+          console.log(data.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, [refresh]);
   return (
     <div className="articles">
       <ContentTop headTitle="Users" />
@@ -197,54 +226,64 @@ const Courses = () => {
           </div>
         </div>
       ) : null}
-      <div className="container">
-    {sessionStorage.getItem("role")==="admin" ? null :    <div className="add">
-          <h1>Add Course</h1>
-          <form action="" onSubmit={handleSubmit}>
+  {showAddLink ?    <div className="add-link">
+        <div className="close" onClick={()=>setShowAddLink(false)}>x</div>
+      
+          <h1>Add Meeting Link</h1>
+          <form action="" onSubmit={handleSubmitUpdate}>
             <label htmlFor="">
-              Name
+             Url
               <input
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setMeetingLink(e.target.value)}
                 type="text"
               />
             </label>
+            <button type="submit">add</button>
+          </form>
+      </div> : null}
+      <div className="container">
+      <div className="add">
+          <h1>Add Lives</h1>
+          <form action="" onSubmit={handleSubmit}>
             <label htmlFor="">
-              Image
+             Title
               <input
-                 onChange={handleImageChange}
-                type="file"
+                onChange={(e) => setTitle(e.target.value)}
+                type="text"
               />
             </label>
+     
             <label htmlFor="">
-              Category
+              Course
               <select name="" id="" onChange={(e)=>setCatId(e.target.value)}>
-                <option value="">select Category</option>
-                {categories.map((cate) => (
+                <option value="">select Course</option>
+                {users.map((cate) => (
                   <option key={cate._id} value={cate._id}>
                     {cate.title}
                   </option>
                 ))}
               </select>
             </label>
+      
             <label htmlFor="">
-              description
+             date
               <input
-                onChange={(e) => setDescription(e.target.value)}
-                type="text"
+                onChange={(e) => setMeetingDate(e.target.value)}
+                type="date"
               />
             </label>
         
             <label htmlFor="">
-              price
+            hour
               <input
-                onChange={(e) => setPrice(e.target.value)}
-                type="text"
+                onChange={(e) => setHour(e.target.value)}
+                type="time"
               />
             </label>
             <label htmlFor="">
-              Price Fter Discount
+              duration by hour
               <input
-                onChange={(e) => setPriceAfterDiscount(e.target.value)}
+                onChange={(e) => setDuration(e.target.value)}
                 type="text"
               />
             </label>
@@ -255,16 +294,18 @@ const Courses = () => {
 
             <button type="submit">add</button>
           </form>
-        </div> }
+        </div>
         <div className="all-art">
-          <h1>Courses</h1>
+          <h1>All lives</h1>
           <div className="arts">
-            {users.map((user, index) => {
+            {courses.map((user, index) => {
               return (
                 <div className="user-card" key={index}>
                   <div className="name">title: {user.title}</div>
-                  <img src={user.image} alt="" />
+                 
                   <button onClick={() => deleteButton(user._id)}>Delete</button>
+                  <button onClick={() => addLink(user._id)}>Add Meeting Link</button>
+                  {user.link ? <a target="_blank" href={user.link}>Meeting</a>: null}
                 </div>
               );
             })}
@@ -275,4 +316,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default Lives;

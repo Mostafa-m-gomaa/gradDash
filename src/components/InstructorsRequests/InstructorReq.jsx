@@ -1,13 +1,13 @@
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
-import "./article.css";
+import "../Sections/article.css";
 import { AppContext } from "../../App";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ContentTop from "../ContentTop/ContentTop";
 import { json } from "react-router-dom";
 
-const Sections = () => {
+const InstRequests = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [artId, setArtId] = useState("");
   const [refresh, setRefresh] = useState(false);
@@ -37,44 +37,7 @@ const [type,setType]=useState("")
     setType("sections")
    
   };
-  // const handleSubmit = async (event) => {
- 
-  //   event.preventDefault();
-  //   const formData = new FormData();
-
-  //   formData.append("course", catId);
-  //   formData.append("title", userName);
-  //   formData.append("description", description);
   
-  
-  //   setLoader(true);
-  //   try {
-  //     const response = await fetch(`${route}sections`, {
-  //       method: "POST",
-  //       body: json.stringify({
-  //         title:userName,
-  //         course:catId,
-  //         description:description
-  //       }),
-  //       headers: {
-  //         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-  //         "Content-Type": "application/json",
-          
-  //       },
-  //     }).then((res) => res.json());
-  //     setLoader(false);
-  //     console.log(response);
-  //     if (response.data) {
-  //       toast.success("Added Successfully");
-  //       setRefresh(!refresh);
-  //     } else if (response.errors) {
-  //       toast.error(response.errors[0].msg);
-  //     } else {
-  //       console.log(response);
-  //       toast.error("هناك خطأ");
-  //     }
-  //   } catch (error) {}
-  // };
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData();
@@ -148,6 +111,30 @@ const [type,setType]=useState("")
       setLoader(false);
     }
   };
+  const handleState = async (state , id) => {
+
+    setLoader(true);
+    fetch(`${route}/instructorsReqs/${state}/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      setLoader(false);
+      console.log(data);
+      if (data.status === "status updated successfully") {
+        toast.success("status updated successfully");
+        setRefresh(!refresh);
+      }
+     else if (data.status === "status was rejected successfully") {
+        toast.success("status updated successfully");
+        setRefresh(!refresh);
+      }
+    });
+  };
+
   const showSec = async (id) => {
     setShowConfirm(false);
     setLoader(true);
@@ -174,61 +161,22 @@ const [type,setType]=useState("")
     }
   };
 
-  // useEffect(() => {
-  //   fetch(`${route}/courses`, {
-  //     headers: {
-  //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log(data);
-  //       if (data.data) {
-  //         setUsers(data.data);
-  //         console.log(data.data);
-  //       }
-  //     });
-  // }, [refresh]);
   useEffect(() => {
-    const role = sessionStorage.getItem("role");
-    const token = sessionStorage.getItem("token");
-  
-    if (role && token) {
-      const endpoint = role === "instructor" ? `${route}/courses/MyCourses` : `${route}/courses`;
-  
-      fetch(endpoint, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          if (data.data) {
-            setUsers(data.data);
-            console.log(data.data);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-        });
-    }
+    fetch(`${route}/instructorsReqs`, {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.data) {
+          setUsers(data.data);
+          console.log( "reqs" ,data.data);
+        }
+      });
   }, [refresh]);
-  // useEffect(() => {
-  //   fetch(`${route}/sections`, {
-  //     headers: {
-  //       Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log(data);
-  //       if (data.data) {
-  //         setSections(data.data);
-  //         console.log(data.data);
-  //       }
-  //     });
-  // }, [refresh]);
+
   return (
     <div className="articles">
       <ContentTop headTitle="Users" />
@@ -263,58 +211,45 @@ const [type,setType]=useState("")
       </div>
        : null}
       <div className="container">
-        <div className="add">
-          <h1>Add Section</h1>
-          <form action="" onSubmit={handleSubmit}>
-            <label htmlFor="">
-              Name
-              <input
-                onChange={(e) => setUsername(e.target.value)}
-                type="text"
-              />
-            </label>
-         
-            <label htmlFor="">
-              Course
-              <select name="" id="" onChange={(e)=>setCatId(e.target.value)}>
-                <option value="">select Course</option>
-                {users.map((cate) => (
-                  <option key={cate._id} value={cate._id}>
-                    {cate.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label htmlFor="">
-              description
-              <input
-                onChange={(e) => setDescription(e.target.value)}
-                type="text"
-              />
-            </label>
-        
-           
-      
-            
-           
-       
-
-            <button type="submit">add</button>
-          </form>
-        </div>
+    
         <div className="all-art">
-          <h1>Courses</h1>
+          <h1>All Pending requests</h1>
           <div className="arts">
-            {users.map((user, index) => {
-              return (
-                <div className="user-card" key={index}>
-                  <div className="name">title: {user.title}</div>
-                <img src={user.image} alt="" />
-                <button onClick={() => showSec(user._id)}>Show sections</button>
-                  {/* <button onClick={() => deleteButton(user._id)}>Delete</button> */}
-                </div>
-              );
-            })}
+
+          {users.map((user, index) => {
+  const dateChange = (dateString) => {
+    const date = new Date(dateString);
+
+    const formattedDate = date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    return formattedDate;
+  };
+
+  return (
+    <div className="user-card" key={index}>
+      <div className="name">Full name: {user.fullName}</div>
+      <div>brief about : {user.ansOfQuestion}</div>
+      <div>birthday : {dateChange(user.birthDate)}</div>
+      <div> city : {user.city}</div>
+      <div>country : {user.country}</div>
+      <a href={user.sampleOfWork}> sample of work</a>
+      <a href={user.cv}>cv</a>
+      <div> email : {user.user.email}</div>
+      {user.status === "pending" ? (
+        <div className="btns">
+          <button onClick={() => handleState("accept", user._id)}>Accept</button>
+          <button onClick={() => handleState("reject", user._id)}>Reject</button>
+        </div>
+      ) : null}
+    </div>
+  );
+})}
+
+
           </div>
         </div>
       </div>
@@ -322,4 +257,4 @@ const [type,setType]=useState("")
   );
 };
 
-export default Sections;
+export default InstRequests;

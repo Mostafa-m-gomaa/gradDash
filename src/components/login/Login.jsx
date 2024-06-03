@@ -41,11 +41,11 @@ const Login = () => {
         sessionStorage.setItem("login", true);
         sessionStorage.setItem("email", response.data.email);
         sessionStorage.setItem("name", response.data.username);
-        sessionStorage.setItem("id", response.data.id);
+        sessionStorage.setItem("id", response.data._id);
         sessionStorage.setItem("role", response.data.role);
 
         setLogin(true);
-        history("/categories");
+        history("/Courses");
       } else {
         toast.error("هناك خطأ بكلمة السر أو الأيميل حاول مرة أخري");
       }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { navigationLinks } from "../../data/data";
+// import { navigationLinks } from "../../data/data";
 import "./Sidebar.css";
 import { useContext } from "react";
 import { SidebarContext } from "../../context/sidebarContext";
@@ -12,6 +12,33 @@ const Sidebar = () => {
   const [sidebarClass, setSidebarClass] = useState("");
   const { isSidebarOpen } = useContext(SidebarContext);
   const { login, setLogin, employee } = useContext(AppContext);
+  const [navigationLinks, setNavigationLinks] = useState([]);
+
+  // const navigationLinks = [
+  //   { id: 1, title: "users" },
+  //   { id: 5, title: "Categories" },
+  //   { id: 6, title: "Courses" },
+  //   { id: 7, title: "Sections" },
+  //   { id: 8, title: "Posts" },
+  //   { id: 9, title: "Instructors pending Requests" },
+  // ];
+  const navigationLinksForAdmin = [
+    { id: 1, title: "users" },
+    { id: 5, title: "Categories" },
+    { id: 6, title: "Courses" },
+    { id: 8, title: "Posts" },
+    { id: 9, title: "Instructors pending Requests" },
+  ];
+  const navigationLinksForInstructor = [
+   
+    { id: 6, title: "Courses" },
+    { id: 7, title: "Sections" },
+    { id: 8, title: "Lessons" },
+    { id: 9, title: "Lives" },
+
+
+    
+  ];
 
   useEffect(() => {
     if (isSidebarOpen) {
@@ -24,6 +51,16 @@ const Sidebar = () => {
     sessionStorage.clear();
     setLogin(false);
   };
+  useEffect(() => {
+    
+    if(sessionStorage.getItem("role")==="admin"){
+      setNavigationLinks(navigationLinksForAdmin);
+    }
+    else {
+      setNavigationLinks(navigationLinksForInstructor);
+    }
+  }, [isSidebarOpen]);
+
 
   return (
     <div className={`sidebar ${sidebarClass}`}>
