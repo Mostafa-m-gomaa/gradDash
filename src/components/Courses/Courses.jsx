@@ -56,7 +56,7 @@ const Courses = () => {
     skillsArr.forEach((skill) => {
       formData.append("skills", skill);
     });
-    // formData.append("skills", skillsArr);
+   
   
     setLoader(true);
     try {
