@@ -66,7 +66,7 @@ const Sidebar = () => {
     <div className={`sidebar ${sidebarClass}`}>
       <div className="user-info">
         <div className="info-img img-fit-cover">
-          <img src={myfoto} alt="profile image" />
+          
         </div>
         <span className="info-name">علمني</span>
       </div>
