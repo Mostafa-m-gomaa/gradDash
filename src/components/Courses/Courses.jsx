@@ -23,6 +23,7 @@ const Courses = () => {
   const [instructor, setInstructor] = useState("");
   const [description, setDescription] = useState("");
   const [courseWord,setCourseWord]=useState("courses")
+  const [skills,setSkills]=useState("")
 
 
 
@@ -43,6 +44,7 @@ const Courses = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData();
+    const skillsArr = skills.split(",")
 
     formData.append("title", userName);
     formData.append("image", image);
@@ -51,6 +53,10 @@ const Courses = () => {
     formData.append("instructor", sessionStorage.getItem("id"));
     formData.append("price", price);
     formData.append("priceAfterDiscount", priceAfterDiscount);
+    skillsArr.forEach((skill) => {
+      formData.append("skills", skill);
+    });
+    // formData.append("skills", skillsArr);
   
     setLoader(true);
     try {
@@ -230,6 +236,13 @@ const Courses = () => {
               description
               <input
                 onChange={(e) => setDescription(e.target.value)}
+                type="text"
+              />
+            </label>
+            <label htmlFor="">
+              skills
+              <input
+                onChange={(e) => setSkills(e.target.value)}
                 type="text"
               />
             </label>
